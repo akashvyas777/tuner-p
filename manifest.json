@@ -1,0 +1,29 @@
+{
+  "name": "TuneLab Accurate",
+  "short_name": "TuneLab",
+  "description": "Responsive chromatic tuner web app interface for guitar and other instruments, installable on iPhone home screen.",
+  "start_url": "./accurate-tuner-app.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111313",
+  "theme_color": "#111313",
+  "orientation": "portrait",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["music", "utilities", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%23111313'/%3E%3Ccircle cx='96' cy='96' r='62' fill='none' stroke='%2358b0a4' stroke-width='10'/%3E%3Cpath d='M96 42v54' stroke='%23eef2ef' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M72 66l24-24 24 24' stroke='%23eef2ef' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='96' cy='96' r='10' fill='%2358b0a4'/%3E%3C/svg%3E',
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%23111313'/%3E%3Ccircle cx='256' cy='256' r='168' fill='none' stroke='%2358b0a4' stroke-width='28'/%3E%3Cpath d='M256 110v142' stroke='%23eef2ef' stroke-width='28' stroke-linecap='round'/%3E%3Cpath d='M192 174l64-64 64 64' stroke='%23eef2ef' stroke-width='28' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='256' cy='256' r='24' fill='%2358b0a4'/%3E%3C/svg%3E',
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

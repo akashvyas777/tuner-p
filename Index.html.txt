@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>accurate-tuner-app</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #edeae5;
+      --color-border: #d4d1ca; --color-text: #28251d; --color-text-muted: #6f6c66; --color-text-faint: #a4a19a;
+      --color-text-inverse: #f9f8f4; --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8;
+      --color-success: #437a22; --color-warning: #964219; --radius-sm: 0.5rem; --radius-md: 0.9rem; --radius-lg: 1.25rem; --radius-xl: 1.75rem;
+      --shadow-sm: 0 1px 2px rgba(10,10,10,0.06); --shadow-md: 0 12px 40px rgba(10,10,10,0.09); --shadow-lg: 0 20px 60px rgba(10,10,10,0.14);
+      --font-body: 'General Sans', Inter, system-ui, sans-serif;
+      --font-display: 'General Sans', Inter, system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #111313; --color-surface: #171a1a; --color-surface-2: #1d2020; --color-surface-offset: #232727;
+      --color-border: #313737; --color-text: #eef2ef; --color-text-muted: #b2bbb6; --color-text-faint: #707974;
+      --color-text-inverse: #111313; --color-primary: #58b0a4; --color-primary-hover: #7cc5bc; --color-primary-highlight: rgba(88,176,164,0.14);
+      --color-success: #7ed957; --color-warning: #ffb15f;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.22); --shadow-md: 0 12px 40px rgba(0,0,0,0.30); --shadow-lg: 0 24px 80px rgba(0,0,0,0.42);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+    body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);line-height:1.5;background:
+      radial-gradient(circle at top, rgba(88,176,164,0.12), transparent 28%),
+      linear-gradient(180deg, var(--color-bg), color-mix(in srgb, var(--color-bg) 82%, black 18%));
+      color:var(--color-text)}
+    button,input,select{font:inherit;color:inherit}
+    button{cursor:pointer;border:none;background:none}
+    .app-shell{width:min(1180px, calc(100% - 2rem));margin:0 auto;padding:var(--space-6) 0 var(--space-12)}
+    .skip-link{position:absolute;left:-999px;top:0}.skip-link:focus{left:1rem;top:1rem;background:var(--color-primary);color:var(--color-text-inverse);padding:.75rem 1rem;border-radius:var(--radius-sm);z-index:10}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-8)}
+    .brand{display:flex;align-items:center;gap:var(--space-3);font-weight:700;letter-spacing:.02em}
+    .brand svg{width:2.25rem;height:2.25rem;padding:.45rem;border-radius:.8rem;background:var(--color-primary-highlight);color:var(--color-primary)}
+    .topbar-actions{display:flex;align-items:center;gap:var(--space-3)}
+    .icon-btn,.pill-btn{min-height:44px;min-width:44px;border:1px solid color-mix(in srgb, var(--color-text) 12%, transparent);background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);transition:.18s ease}
+    .icon-btn:hover,.pill-btn:hover{transform:translateY(-1px);border-color:color-mix(in srgb, var(--color-primary) 35%, transparent)}
+    .icon-btn{display:grid;place-items:center;padding:.75rem}
+    .pill-btn{padding:.75rem 1rem;font-size:var(--text-sm);font-weight:600}
+    .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-6)}
+    .panel{background:linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 88%, white 12%), var(--color-surface));border:1px solid color-mix(in srgb, var(--color-text) 10%, transparent);border-radius:var(--radius-xl);box-shadow:var(--shadow-md)}
+    .main-panel{padding:clamp(1.25rem, 2vw, 2rem);display:grid;gap:var(--space-6)}
+    .hero-copy{display:flex;justify-content:space-between;align-items:start;gap:var(--space-4);flex-wrap:wrap}
+    .eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.18em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+    h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1.02;max-width:12ch}
+    .subcopy{max-width:52ch;color:var(--color-text-muted)}
+    .mode-switch{display:flex;gap:var(--space-2);flex-wrap:wrap}
+    .chip{padding:.65rem .9rem;border-radius:999px;background:var(--color-surface-2);border:1px solid color-mix(in srgb, var(--color-text) 10%, transparent);font-size:var(--text-sm);color:var(--color-text-muted)}
+    .chip.active{background:var(--color-primary-highlight);color:var(--color-primary);border-color:color-mix(in srgb, var(--color-primary) 40%, transparent)}
+    .tuner-core{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:var(--space-6);align-items:center}
+    .dial-wrap{position:relative;display:grid;place-items:center;padding:var(--space-4)}
+    .dial{width:min(100%, 520px);aspect-ratio:1;border-radius:50%;background:
+      radial-gradient(circle at center, color-mix(in srgb, var(--color-surface-2) 82%, transparent) 0 36%, transparent 36%),
+      conic-gradient(from -120deg, rgba(255,96,96,.55), rgba(255,177,95,.7), rgba(126,217,87,.88), rgba(255,177,95,.7), rgba(255,96,96,.55));
+      padding:18px;box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent), var(--shadow-lg);position:relative}
+    .dial::before{content:"";position:absolute;inset:18px;border-radius:50%;background:radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--color-surface-2) 65%, white 10%), var(--color-surface));box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent)}
+    .ticks,.needle,.center-readout{position:absolute;inset:0}
+    .tick{position:absolute;left:50%;top:24px;width:2px;height:16px;background:color-mix(in srgb, var(--color-text) 16%, transparent);transform-origin:50% 210px;border-radius:999px}
+    .tick.major{height:24px;background:color-mix(in srgb, var(--color-text) 34%, transparent)}
+    .needle{display:grid;place-items:center;pointer-events:none}
+    .needle::before{content:"";width:4px;height:42%;border-radius:999px;background:linear-gradient(180deg, var(--color-primary-hover), var(--color-primary));transform:translateY(-18%) rotate(var(--needle-angle, 0deg));transform-origin:50% calc(100% - 32px);box-shadow:0 0 18px rgba(88,176,164,.25)}
+    .needle::after{content:"";width:18px;height:18px;border-radius:50%;background:var(--color-primary);box-shadow:0 0 0 8px color-mix(in srgb, var(--color-primary) 18%, transparent)}
+    .center-readout{display:grid;place-items:center;text-align:center;padding:0 20%}
+    .note{font-size:clamp(4rem, 8vw, 6.5rem);line-height:.9;font-weight:700;letter-spacing:-.04em}
+    .freq{font-size:var(--text-lg);color:var(--color-text-muted);margin-top:var(--space-2)}
+    .status{margin-top:var(--space-4);display:inline-flex;align-items:center;gap:.5rem;padding:.65rem .9rem;border-radius:999px;background:color-mix(in srgb, var(--color-success) 14%, transparent);color:var(--color-success);font-size:var(--text-sm);font-weight:600}
+    .status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+    .side-stack{display:grid;gap:var(--space-4)}
+    .mini-card{padding:var(--space-5);background:var(--color-surface-2);border-radius:var(--radius-lg);border:1px solid color-mix(in srgb, var(--color-text) 9%, transparent)}
+    .mini-label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.16em;color:var(--color-text-faint);margin-bottom:var(--space-3)}
+    .mini-value{font-size:var(--text-lg);font-weight:700}
+    .strings{display:grid;grid-template-columns:repeat(6, minmax(0,1fr));gap:var(--space-3)}
+    .string-btn{padding:var(--space-4) var(--space-2);border-radius:var(--radius-md);background:var(--color-surface-2);border:1px solid color-mix(in srgb, var(--color-text) 10%, transparent);display:grid;gap:.2rem;place-items:center;min-height:88px}
+    .string-btn.active{background:var(--color-primary-highlight);border-color:color-mix(in srgb, var(--color-primary) 38%, transparent);color:var(--color-primary)}
+    .string-note{font-size:1.35rem;font-weight:700}.string-name{font-size:var(--text-xs);color:var(--color-text-muted)}
+    .bottom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-6);margin-top:var(--space-6)}
+    .section-card{padding:var(--space-5)}
+    .section-title{font-size:var(--text-lg);margin-bottom:var(--space-4)}
+    .stats{display:grid;gap:var(--space-4)}
+    .stat-row{display:flex;justify-content:space-between;gap:var(--space-4);padding-bottom:var(--space-3);border-bottom:1px solid color-mix(in srgb, var(--color-text) 8%, transparent)}
+    .stat-row:last-child{border-bottom:0;padding-bottom:0}
+    .history-bars{display:grid;grid-template-columns:repeat(10,1fr);align-items:end;gap:.45rem;height:168px}
+    .bar{border-radius:999px 999px .45rem .45rem;background:linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 85%, white 15%), color-mix(in srgb, var(--color-primary) 62%, black 38%));opacity:.35}
+    .bar.good{opacity:1}
+    .preset-list{display:grid;gap:var(--space-3)}
+    .preset{display:flex;justify-content:space-between;align-items:center;padding:var(--space-4);border-radius:var(--radius-md);background:var(--color-surface-2);border:1px solid color-mix(in srgb, var(--color-text) 8%, transparent)}
+    .preset small{color:var(--color-text-muted)}
+    .actions-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
+    .primary-btn{padding:.95rem 1.15rem;border-radius:var(--radius-md);background:var(--color-primary);color:var(--color-text-inverse);font-weight:700;min-height:44px}
+    .secondary-btn{padding:.95rem 1.15rem;border-radius:var(--radius-md);background:var(--color-surface-2);border:1px solid color-mix(in srgb, var(--color-text) 10%, transparent);font-weight:600;min-height:44px}
+    .github-box{margin-top:var(--space-6);padding:var(--space-5);display:flex;justify-content:space-between;gap:var(--space-5);align-items:center;flex-wrap:wrap;background:linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 78%, var(--color-primary-highlight) 22%), var(--color-surface));border:1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);border-radius:var(--radius-xl)}
+    .code-block{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--text-sm);padding:1rem;border-radius:var(--radius-md);background:#0f1111;color:#d4ebe6;min-width:min(100%, 360px)}
+    .footer-note{margin-top:var(--space-5);color:var(--color-text-muted);font-size:var(--text-sm)}
+    @media (max-width: 980px){
+      .hero-grid,.tuner-core,.bottom-grid{grid-template-columns:1fr}
+      .dial{max-width:460px;margin:0 auto}
+      h1{max-width:16ch}
+    }
+    @media (max-width: 700px){
+      .app-shell{width:min(100% - 1rem, 100%);padding-top:var(--space-4)}
+      .topbar{align-items:flex-start;flex-direction:column}
+      .main-panel{padding:1rem}
+      .strings{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .note{font-size:4.25rem}
+      .center-readout{padding:0 16%}
+      .github-box{align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="TuneLab brand">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M7.5 7.5 12 3l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 13.5c0 4.418 3.582 8 8 8s8-3.582 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>TuneLab Accurate</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="pill-btn" type="button">Auto detect</button>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main" class="hero-grid">
+      <section class="panel main-panel" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div>
+            <p class="eyebrow">Chromatic tuner</p>
+            <h1 id="hero-title">A GitHub-ready tuner interface with highly visible pitch feedback.</h1>
+          </div>
+          <div class="mode-switch" aria-label="Tuning modes">
+            <button class="chip active" type="button">Standard</button>
+            <button class="chip" type="button">Drop D</button>
+            <button class="chip" type="button">Chromatic</button>
+          </div>
+        </div>
+
+        <p class="subcopy">This single HTML file is designed like modern tuner apps: automatic microphone tuning, clear note display, cent offset guidance, reference frequency, and quick preset switching.</p>
+
+        <div class="tuner-core">
+          <div class="dial-wrap">
+            <div class="dial" id="dial">
+              <div class="ticks" id="ticks"></div>
+              <div class="needle" id="needle" style="--needle-angle:-8deg"></div>
+              <div class="center-readout">
+                <div>
+                  <div class="note" id="noteDisplay">E</div>
+                  <div class="freq" id="freqDisplay">82.4 Hz · -6 cents</div>
+                  <div class="status"><span class="dot"></span><span id="statusText">Slightly flat</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="side-stack" aria-label="Current pitch details">
+            <div class="mini-card">
+              <div class="mini-label">Target</div>
+              <div class="mini-value" id="targetDisplay">E2 · 82.41 Hz</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Input level</div>
+              <div class="mini-value">-21 dB</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Reference A4</div>
+              <div class="mini-value">440 Hz</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Accuracy</div>
+              <div class="mini-value">±0.1 cent UI goal</div>
+            </div>
+          </aside>
+        </div>
+
+        <div>
+          <p class="mini-label">String presets</p>
+          <div class="strings" id="stringButtons">
+            <button class="string-btn active" data-note="E" data-freq="82.41" data-cents="-6" data-label="6th string">
+              <span class="string-note">E</span><span class="string-name">6th</span>
+            </button>
+            <button class="string-btn" data-note="A" data-freq="110.00" data-cents="2" data-label="5th string">
+              <span class="string-note">A</span><span class="string-name">5th</span>
+            </button>
+            <button class="string-btn" data-note="D" data-freq="146.83" data-cents="0" data-label="4th string">
+              <span class="string-note">D</span><span class="string-name">4th</span>
+            </button>
+            <button class="string-btn" data-note="G" data-freq="196.00" data-cents="4" data-label="3rd string">
+              <span class="string-note">G</span><span class="string-name">3rd</span>
+            </button>
+            <button class="string-btn" data-note="B" data-freq="246.94" data-cents="-1" data-label="2nd string">
+              <span class="string-note">B</span><span class="string-name">2nd</span>
+            </button>
+            <button class="string-btn" data-note="E" data-freq="329.63" data-cents="1" data-label="1st string">
+              <span class="string-note">E</span><span class="string-name">1st</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel section-card" aria-labelledby="build-title">
+        <p class="eyebrow">Developer handoff</p>
+        <h2 class="section-title" id="build-title">What this page already includes</h2>
+        <div class="stats">
+          <div class="stat-row"><span>Responsive tuner layout</span><strong>Desktop + mobile</strong></div>
+          <div class="stat-row"><span>Theme toggle</span><strong>Light / dark</strong></div>
+          <div class="stat-row"><span>Interactive string buttons</span><strong>6 presets</strong></div>
+          <div class="stat-row"><span>Ready for microphone logic</span><strong>Web Audio API</strong></div>
+        </div>
+
+        <div class="github-box">
+          <div>
+            <p class="mini-label">GitHub structure</p>
+            <div class="code-block">tuner-project/<br>└── accurate-tuner-app.html</div>
+          </div>
+          <div class="actions-row">
+            <button class="primary-btn" id="downloadBtn" type="button">Download HTML</button>
+            <button class="secondary-btn" id="copyBtn" type="button">Copy setup notes</button>
+          </div>
+        </div>
+
+        <p class="footer-note">To make it fully accurate, connect this UI to live microphone pitch detection with the Web Audio API and an autocorrelation or YIN-based detector.</p>
+      </aside>
+    </main>
+
+    <section class="bottom-grid" aria-label="Support panels">
+      <article class="panel section-card">
+        <h2 class="section-title">Tuning history</h2>
+        <div class="history-bars" aria-hidden="true">
+          <div class="bar" style="height:44%"></div>
+          <div class="bar" style="height:50%"></div>
+          <div class="bar good" style="height:74%"></div>
+          <div class="bar" style="height:58%"></div>
+          <div class="bar good" style="height:82%"></div>
+          <div class="bar" style="height:62%"></div>
+          <div class="bar good" style="height:88%"></div>
+          <div class="bar" style="height:54%"></div>
+          <div class="bar good" style="height:92%"></div>
+          <div class="bar good" style="height:96%"></div>
+        </div>
+      </article>
+
+      <article class="panel section-card">
+        <h2 class="section-title">Preset tunings</h2>
+        <div class="preset-list">
+          <div class="preset"><span>Standard Guitar</span><small>E A D G B E</small></div>
+          <div class="preset"><span>Drop D</span><small>D A D G B E</small></div>
+          <div class="preset"><span>Ukulele C</span><small>G C E A</small></div>
+          <div class="preset"><span>Bass Standard</span><small>E A D G</small></div>
+        </div>
+      </article>
+
+      <article class="panel section-card">
+        <h2 class="section-title">Production notes</h2>
+        <div class="stats">
+          <div class="stat-row"><span>Microphone permission state</span><strong>Prompt on start</strong></div>
+          <div class="stat-row"><span>Pitch window smoothing</span><strong>6-frame average</strong></div>
+          <div class="stat-row"><span>Low-noise threshold</span><strong>-45 dB gate</strong></div>
+          <div class="stat-row"><span>Ideal deployment</span><strong>GitHub Pages</strong></div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    const ticks = document.getElementById('ticks');
+    for (let i = -25; i <= 25; i++) {
+      const tick = document.createElement('span');
+      tick.className = 'tick' + (i % 5 === 0 ? ' major' : '');
+      tick.style.transform = `translateX(-50%) rotate(${i * 4}deg)`;
+      ticks.appendChild(tick);
+    }
+
+    const stringButtons = [...document.querySelectorAll('.string-btn')];
+    const noteDisplay = document.getElementById('noteDisplay');
+    const freqDisplay = document.getElementById('freqDisplay');
+    const targetDisplay = document.getElementById('targetDisplay');
+    const statusText = document.getElementById('statusText');
+    const needle = document.getElementById('needle');
+
+    function updateTuner(btn) {
+      stringButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const note = btn.dataset.note;
+      const freq = Number(btn.dataset.freq).toFixed(2);
+      const cents = Number(btn.dataset.cents);
+      noteDisplay.textContent = note;
+      freqDisplay.textContent = `${freq} Hz · ${cents > 0 ? '+' : ''}${cents} cents`;
+      targetDisplay.textContent = `${note} target · ${freq} Hz`;
+      statusText.textContent = cents === 0 ? 'Perfectly in tune' : cents > 0 ? 'Slightly sharp' : 'Slightly flat';
+      needle.style.setProperty('--needle-angle', `${cents * 2}deg`);
+    }
+    stringButtons.forEach(btn => btn.addEventListener('click', () => updateTuner(btn)));
+
+    const root = document.documentElement;
+    const themeBtn = document.querySelector('[data-theme-toggle]');
+    let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    root.setAttribute('data-theme', theme);
+    themeBtn.innerHTML = theme === 'dark'
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+    themeBtn.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', theme);
+      themeBtn.innerHTML = theme === 'dark'
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob(['<!DOCTYPE html>\n' + html], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'accurate-tuner-app.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const text = [
+        '1. Create a new GitHub repository.',
+        '2. Upload accurate-tuner-app.html.',
+        '3. Enable GitHub Pages from the main branch.',
+        '4. Replace demo data with Web Audio API pitch detection.',
+        '5. Add microphone permission flow and frequency smoothing.'
+      ].join('\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        document.getElementById('copyBtn').textContent = 'Copied';
+        setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy setup notes', 1400);
+      } catch (e) {
+        alert(text);
+      }
+    });
+  </script>
+</body>
+</html>
